@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -15,6 +16,7 @@ import javax.imageio.ImageIO;
 */
 public class ScanSpotAndMove {
 	private HashSet<String> duplicateSpot=new HashSet<String>();
+	private HashSet<String> store=new HashSet<String>();
 	
 	/**
 	 * 
@@ -28,6 +30,9 @@ public class ScanSpotAndMove {
 		//把颜色数量放入map
 		for(int x = 0; x < width; ++x) {
 			for (int y = 0; y < height; ++y) {
+				 if(store.contains(x+":"+y)){
+					continue;	
+				 }
 				 int r = (img.getRGB(x, y) & 0xff0000) >> 16;
 		         int g = (img.getRGB(x, y) & 0xff00) >> 8;
 		         int b = (img.getRGB(x, y) & 0xff) ;
@@ -35,6 +40,8 @@ public class ScanSpotAndMove {
 		        	 duplicateSpot.clear(); 
 		        	 if(statisticsSpot(img,x,y)<hold){
 		        		 img.setRGB(x, y, Color.WHITE.getRGB());
+		        	 }else{
+		        		 store.addAll(duplicateSpot);
 		        	 }
 		         }
 			}
@@ -50,21 +57,18 @@ public class ScanSpotAndMove {
         int b = (img.getRGB(xOff, yOff) & 0xff) ;
         int coun=0;
         if(r+g+b<50){
+        	duplicateSpot.add(xOff+":"+yOff);
         	coun++;
         	if(yOff+1<height && ! duplicateSpot.contains(xOff+":"+(yOff+1))){
-        		duplicateSpot.add(xOff+":"+(yOff+1));
         		coun=coun+statisticsSpot(img,xOff,yOff+1);
         	}
         	if(yOff-1>0 && ! duplicateSpot.contains(xOff+":"+(yOff-1))){
-        		duplicateSpot.add(xOff+":"+(yOff-1));
         		coun=coun+statisticsSpot(img,xOff,yOff-1);
         	}
         	if(xOff+1<width && ! duplicateSpot.contains((xOff+1)+":"+yOff)){
-        		duplicateSpot.add((xOff+1)+":"+yOff);
         		coun=coun+statisticsSpot(img,xOff+1,yOff);
         	}
         }
         return coun;
 	}
-	
 }
