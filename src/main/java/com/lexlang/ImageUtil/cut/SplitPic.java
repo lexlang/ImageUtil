@@ -11,12 +11,14 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lexlang.ImageUtil.CommonUtil;
 
 
 
 public class SplitPic {
-	private static int whiteThreshold = 200;
+	private static int whiteThreshold = 600;
 	
 	/**
 	 * 水平方向切割
@@ -51,8 +53,6 @@ public class SplitPic {
 		return subImgs;
 	}
 	
-	
-	
 	/**
 	 * 垂直方向切割
 	 * @param img
@@ -84,6 +84,124 @@ public class SplitPic {
 			}
 		}
 		return subImgs;
+	}
+	
+	public static JSONArray splitHanZi(BufferedImage img){
+		JSONArray result=new JSONArray();
+		List<String> vList=getVlocal(img);
+		for(int index=0;index<vList.size();index++){
+			String[] vArr=vList.get(index).split("_");
+			BufferedImage currentImg = img.getSubimage(0, Integer.parseInt(vArr[0]), img.getWidth(),  Integer.parseInt(vArr[1]));
+			result.add(checkBoxOrHsplit(currentImg));
+		}
+		return result;
+	}
+	
+	private static JSONArray checkBoxOrHsplit(BufferedImage img){
+		JSONArray result=new JSONArray();
+		if(checkBox(img)){
+			JSONArray store=splitBox(img);
+			for(int index=0;index<store.size();index++){
+				JSONArray items = store.getJSONArray(index);
+				JSONArray tempResult=new JSONArray();
+				for(int ind=0;ind<items.size();ind++){
+					tempResult.add(splitHanZi((BufferedImage) items.get(ind)));
+				}
+				result.add(tempResult);
+			}
+		}else{
+			result.add(img);
+/*			List<String> hList=getHlocal(img);
+			for(int index=0;index<hList.size();index++){
+				String[] hArr=hList.get(index).split("_");
+				BufferedImage currentImg = img.getSubimage(Integer.parseInt(hArr[0]), 0
+						, Integer.parseInt(hArr[1])+1, img.getHeight());
+				result.add(currentImg);
+			}*/
+		}
+		return result;
+	}
+	
+	public static JSONArray splitBox(BufferedImage img){
+		//img 移除白框
+		BulkStatistics bulk=new BulkStatistics();
+		//最小矩阵法
+		//找到起止点
+		int width = img.getWidth();
+		int height = img.getHeight();
+		for(int j=0;j<height;j++){
+			for(int i=0;i<width;i++){
+				if(! bulk.checkInBox(i, j) && CommonUtil.isBlack(img.getRGB(i, j))){
+					if(startEndPoint(img,i,j)){
+						String[] arr=getEndStartPoint(img,i,j).split("_");
+						bulk.addImage(i, j, Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), img);
+					}
+				}
+			}
+		}
+
+		return bulk.getStore();
+	}
+	
+	/**
+	 * 
+	 * @param img
+	 * @param x 上顶点坐标
+	 * @param y
+	 * @return
+	 */
+	private static String getEndStartPoint(BufferedImage img,int x,int y){
+		int offY=y+1;
+		//找到 向下的坐标
+		while(! (CommonUtil.isBlack(img.getRGB(x+1, offY)) && CommonUtil.isBlack(img.getRGB(x+2, offY)))){
+			offY+=1;
+		}
+		int offX=x+1;
+		//找到向上的坐标
+		while(! (CommonUtil.isBlack(img.getRGB(offX, offY-1)) && CommonUtil.isBlack(img.getRGB(offX, offY-2)))){
+			offX+=1;
+		}
+		return offX+"_"+offY;
+	}
+	
+	/**
+	 * 上面顶角
+	 * @param img
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private static boolean startEndPoint(BufferedImage img,int x,int y){
+		try{
+			if(CommonUtil.isBlack(img.getRGB(x, y)) && CommonUtil.isBlack(img.getRGB(x+1, y)) && CommonUtil.isBlack(img.getRGB(x+2, y))
+					&& CommonUtil.isBlack(img.getRGB(x, y+1)) && CommonUtil.isBlack(img.getRGB(x, y+2))
+					&& CommonUtil.isBlack(img.getRGB(x, y+1)) && ! CommonUtil.isBlack(img.getRGB(x+1, y+1))
+					&& ! CommonUtil.isBlack(img.getRGB(x+2, y+1)) && ! CommonUtil.isBlack(img.getRGB(x+1, y+2))){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception ex){}
+		return false;
+	}
+	
+	
+	/**
+	 * 水平线,占据屏幕二分之一
+	 * @param img
+	 * @return
+	 */
+	private static boolean checkBox(BufferedImage img){
+		int width = img.getWidth();
+		int total=0;//黑点数量
+		for(int index=0;index<img.getWidth();index++){
+			if(CommonUtil.isBlack(img.getRGB(index, 0))){
+				total++;
+			}
+		}
+		if((total*1.0)/width>0.5)
+			return true;
+		return false;
 	}
 	
 
