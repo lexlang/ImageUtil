@@ -105,6 +105,6 @@ public class TrainUtil {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		train("I:\\myPy\\CrawlUtils\\crawl");
+		train("I:/cncanew/titleOrign1/");
 	}
 }

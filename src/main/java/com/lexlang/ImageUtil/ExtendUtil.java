@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
@@ -57,37 +58,13 @@ public class ExtendUtil {
 		return CommonUtil.removeBlank(newImg ,230*3, 0); //newImg.getSubimage(img.getWidth()*2, img.getHeight()*2, img.getWidth(), img.getHeight());
 	}
 	
-	public static BufferedImage getSheer(BufferedImage img) throws Exception{
+	public static BufferedImage getSheer(BufferedImage img,double xSheer,double ySheer) throws Exception{
 		BufferedImage newImg=new BufferedImage(img.getWidth()*4,img.getHeight()*4,img.getType());
 		Graphics2D g2=newImg.createGraphics();
 		g2.setBackground(Color.WHITE);
 		g2.clearRect(0, 0, img.getWidth()*4,img.getHeight()*4);
 		g2.translate(img.getWidth()*2,img.getHeight()*2);
-		switch(rand.nextInt(9)){
-			case 0:
-				g2.shear(0.1, 0);
-				break;
-			case 1:
-				g2.shear(0.2, 0);
-				break;
-			case 3:
-				g2.shear(-0.1, 0);
-				break;
-			case 4:
-				g2.shear(-0.2, 0);
-				break;
-			case 5:
-				g2.shear(0,0.1);
-				break;
-			case 6:
-				g2.shear(0,0.2);
-				break;
-			case 7:
-				g2.shear(0,-0.1);
-				break;
-			default:
-				g2.shear(0,-0.2);
-		}
+		g2.shear(xSheer, ySheer);
 		g2.drawImage(img, null, null);
 		return CommonUtil.removeBlank(newImg ,230*3, 0);
 	}
@@ -166,23 +143,73 @@ public class ExtendUtil {
 			final BufferedImage img = ImageIO.read(file);
 			String name=file.getName().toLowerCase().replace(path, "").replace(".jpg", "").replace(".png", "");
 			System.out.println(name);
-			hs.put(name+"up1"+"right0", moveOnePoint(img,1,0));
-			hs.put(name+"up-1"+"right0", moveOnePoint(img,-1,0));
-			hs.put(name+"up0"+"right1", moveOnePoint(img,0,1));
-			hs.put(name+"up0"+"right-1", moveOnePoint(img,0,-1));
-			hs.put(name+"angle1", getAnglePic(img,5));
-			hs.put(name+"angle-1", getAnglePic(img,-5));
-			hs.put(name+"angle2", getAnglePic(img,10));
-			hs.put(name+"angle-2", getAnglePic(img,-10));
+			totalTurn(hs,img,name);
+			for(int i=1;i<=3;i=i+2){
+				totalTurn(hs,moveOnePoint(img,i,0),name);
+				totalTurn(hs,moveOnePoint(img,i*-1,0),name);
+				totalTurn(hs,moveOnePoint(img,0,i),name);
+				totalTurn(hs,moveOnePoint(img,0,i*-1),name);
+			}
+			
 		}
 		for(String key:hs.keySet()){
 			ImageIO.write(hs.get(key), "png",new File(path+key+".png"));
 		}
 	}
 	
+	public static void totalTurn(HashMap<String,BufferedImage> hs,BufferedImage img,String name) throws Exception{
+		String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+		hs.put(name+uuid,img);
+		turnAnglePic(hs,img,name,uuid);
+		turnGetSheer(hs,img,name,uuid);
+	}
+	
+	public static void turnAnglePic(HashMap<String,BufferedImage> hs,BufferedImage img,String name,String uuid) throws Exception{
+		hs.put(name+"angle1"+uuid, getAnglePic(img,5));
+		hs.put(name+"angle-1"+uuid, getAnglePic(img,-5));
+		hs.put(name+"angle2"+uuid, getAnglePic(img,10));
+		hs.put(name+"angle-2"+uuid, getAnglePic(img,-10));
+		hs.put(name+"angle3"+uuid, getAnglePic(img,10));
+		hs.put(name+"angle-3"+uuid, getAnglePic(img,-10));
+		hs.put(name+"angle4"+uuid, getAnglePic(img,15));
+		hs.put(name+"angle-4"+uuid, getAnglePic(img,-15));
+		hs.put(name+"angle5"+uuid, getAnglePic(img,20));
+		hs.put(name+"angle-5"+uuid, getAnglePic(img,-20));
+		hs.put(name+"angle6"+uuid, getAnglePic(img,25));
+		hs.put(name+"angle-6"+uuid, getAnglePic(img,-25));
+		hs.put(name+"angle7"+uuid, getAnglePic(img,30));
+		hs.put(name+"angle-7"+uuid, getAnglePic(img,-30));
+		
+		hs.put(name+"angle8"+uuid, getAnglePic(img,40));
+		hs.put(name+"angle-8"+uuid, getAnglePic(img,-40));
+		hs.put(name+"angle9"+uuid, getAnglePic(img,50));
+		hs.put(name+"angle-9"+uuid, getAnglePic(img,-50));
+		hs.put(name+"angle10"+uuid, getAnglePic(img,60));
+		hs.put(name+"angle-10"+uuid, getAnglePic(img,-60));
+		hs.put(name+"angle11"+uuid, getAnglePic(img,70));
+		hs.put(name+"angle-11"+uuid, getAnglePic(img,-70));
+		hs.put(name+"angle12"+uuid, getAnglePic(img,80));
+		hs.put(name+"angle-12"+uuid, getAnglePic(img,-80));
+		hs.put(name+"angle13"+uuid, getAnglePic(img,90));
+		hs.put(name+"angle-13"+uuid, getAnglePic(img,-90));
+		
+	}
+	
+	public static void turnGetSheer(HashMap<String,BufferedImage> hs,BufferedImage img,String name,String uuid) throws Exception{
+		hs.put(name+"sheer1"+uuid, getSheer(img,0.1,0));
+		hs.put(name+"sheer2"+uuid, getSheer(img,-0.1,0));
+		hs.put(name+"sheer3"+uuid, getSheer(img,0.2,0));
+		hs.put(name+"sheer4"+uuid, getSheer(img,-0.2,0));
+		hs.put(name+"sheer5"+uuid, getSheer(img,0,0.1));
+		hs.put(name+"sheer6"+uuid, getSheer(img,0,-0.1));
+		hs.put(name+"sheer7"+uuid, getSheer(img,0,0.2));
+		hs.put(name+"sheer8"+uuid, getSheer(img,0,-0.2));
+	}
+	
 	public static void main(String[] args) throws Exception{
 		//BufferedImage img = ImageIO.read(new File("I:\\cncanew\\2m7j_1002036.png"));
 		//ImageIO.write(getSheer(img), "png", new File("I:\\cncanew\\2m7j_color_"+System.currentTimeMillis()+".png"));
+		makeTrainSample("I:\\cncanew\\titleOrign1\\");
 	}
 	
 	

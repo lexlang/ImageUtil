@@ -31,12 +31,8 @@ public class PredictUtil {
 	
 	public String getSingleCharOcr(BufferedImage img) throws Exception {
 		int key=(int) Double.parseDouble(predict.predict(CommonUtil.imgToSvmInput(img, whiteThreshold))+"");
-		if(key>9){ 
-		  String value = pps.getProperty((key)+"");
-		  return value;
-		}else{
-		 return key+"" ;
-		}	
+		String value = pps.getProperty((key)+"");
+		return value;
 	}
 	
 }

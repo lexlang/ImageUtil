@@ -50,7 +50,7 @@ public class TotalName {
 	
 	
 	public void deleteSame() throws IOException{
-		File dir = new File("I:\\myPy\\CrawlUtils\\crawl");
+		File dir = new File("I:\\cncanew\\newOrigin");
 		File[] files = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".png");
@@ -70,7 +70,7 @@ public class TotalName {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		new TotalName().totalName();
+		new TotalName().deleteSame();
 	}
 
 }

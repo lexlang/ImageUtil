@@ -190,7 +190,7 @@ public class CommonUtil {
 	}
 	
 	public static boolean isBlack(int colorInt) {
-		int whiteThreshold=300;
+		int whiteThreshold=600;
 		final Color color = new Color(colorInt);
 		if (color.getRed() + color.getGreen() + color.getBlue() <= whiteThreshold) {
 			return true;
