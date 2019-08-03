@@ -91,8 +91,6 @@ public class TrainUtil {
 		//将此 Properties 表中的属性列表（键和元素对）写入输出流  
 		}
 		pps.store(out, "Update_name");
-		
-		
 	}
 	
 	public static boolean isNumeric(String str){ 
@@ -105,6 +103,6 @@ public class TrainUtil {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		train("I:/cncanew/titleOrign1/");
+		train("I:/cncanew/titleOrign/train1");
 	}
 }
