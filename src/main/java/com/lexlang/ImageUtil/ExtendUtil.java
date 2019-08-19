@@ -165,7 +165,7 @@ public class ExtendUtil {
 			System.out.println(name);
 			totalTurn(hs,img,name);
 			//for(int i=2;i<=4;i=i+2){
-		    int i=2;
+		    int i=1;
 			totalTurn(hs,moveOnePoint(img,i,0),name);
 			totalTurn(hs,moveOnePoint(img,i*-1,0),name);
 			totalTurn(hs,moveOnePoint(img,0,i),name);
@@ -174,7 +174,7 @@ public class ExtendUtil {
 			
 		}
 		for(String key:hs.keySet()){
-			ImageIO.write(hs.get(key), "png",new File("I:/cncanew/titleOrign/train1/"+key+".png"));
+			ImageIO.write(hs.get(key), "png",new File("I:\\myGit\\Spider\\recog\\"+key+".png"));
 		}
 	}
 	
@@ -231,7 +231,7 @@ public class ExtendUtil {
 	public static void main(String[] args) throws Exception{
 		//BufferedImage img = ImageIO.read(new File("I:\\cncanew\\2m7j_1002036.png"));
 		//ImageIO.write(getSheer(img), "png", new File("I:\\cncanew\\2m7j_color_"+System.currentTimeMillis()+".png"));
-		makeTrainSample("I:\\cncanew\\titleOrign\\");
+		makeTrainSample("I:\\myGit\\Spider\\recog\\");
 	}
 	
 	
